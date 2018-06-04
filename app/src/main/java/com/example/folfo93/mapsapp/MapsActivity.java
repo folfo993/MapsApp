@@ -1,11 +1,14 @@
 package com.example.folfo93.mapsapp;
 
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -25,6 +28,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Location marcaUbicacion =new Location("mi marca");
     private final LatLng CENTRO = new LatLng(42.237558, -8.717285);
     private final LatLng MARCA = new LatLng(42.237023, -8.717944);
+    private static final int LOCATION_REQUEST_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +37,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+
+        marcaUbicacion.setLatitude(MARCA.latitude);
+        marcaUbicacion.setLongitude(MARCA.longitude);
 
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -59,6 +66,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 mMap.addCircle(area).setVisible(true);
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(CENTRO, 17));
+
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+        } else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+            } else {
+                
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        LOCATION_REQUEST_CODE);
+            }
+        }
+        mMap.getUiSettings().setZoomControlsEnabled(true);
     }
 
     @Override
