@@ -1,5 +1,7 @@
 package com.example.folfo93.mapsapp;
 
+import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -10,7 +12,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
-import android.Manifest;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -23,7 +24,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMapClickListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -33,6 +34,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final LatLng MARCA = new LatLng(42.237023, -8.717944);
     private static final int LOCATION_REQUEST_CODE = 1;
     private static final int CAMERA_REQUEST_CODE = 2;
+    private static final int PREMIO_REQUEST_CODE = 4545;
     private Location mLastLocation;
 
     @Override
@@ -78,6 +80,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         mMap.setOnMapClickListener(this);
+        mMap.setOnMapLongClickListener(this);
         CircleOptions area = new CircleOptions()
                 .center(CENTRO)
                 .radius(100)
@@ -206,5 +209,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.addCircle(circuloMarca).setVisible(true);
         }
     }
+
+    @Override
+    public void onMapLongClick(LatLng latLng) {
+        Intent intent = new Intent(getBaseContext(), ScannerActivity.class);
+        startActivityForResult(intent, PREMIO_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        String result = null;
+        if (requestCode == PREMIO_REQUEST_CODE) {
+            if(resultCode == RESULT_OK){
+                result = data.getStringExtra("PREMIO");
+            }
+            if (resultCode == RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+
+        if(result.equals("tesoro")){
+            Toast.makeText(this, "Ganaste", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this, "Ese no es el codigo", Toast.LENGTH_SHORT).show();
+        }
+    }//onActivityResult
+
 }
 
