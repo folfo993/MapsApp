@@ -45,9 +45,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
+        //Indicamos la latitud y longitud a la localizacion de la marca
         marcaUbicacion.setLatitude(MARCA.latitude);
         marcaUbicacion.setLongitude(MARCA.longitude);
 
+        //Instancia con GoogleAPIClient
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addConnectionCallbacks(this)
@@ -99,7 +101,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     android.Manifest.permission.ACCESS_FINE_LOCATION)) {
 
             } else {
-
+                //solicitamos permisos
                 ActivityCompat.requestPermissions(
                         this,
                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
@@ -150,6 +152,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
@@ -192,6 +195,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    //Añadimos un toast indicando la distancia a la marca y un circulo indicando el area en la que se encuentra
     @Override
     public void onMapClick(LatLng latLng) {
         int distanciaPremio = (int)marcaUbicacion.distanceTo(mLastLocation);
@@ -216,6 +220,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startActivityForResult(intent, PREMIO_REQUEST_CODE);
     }
 
+    //Metodo para comprobar si el codigo QR escaneado es el correcto
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         String result = null;
